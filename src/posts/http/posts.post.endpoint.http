@@ -1,0 +1,24 @@
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "title": "Getting Started with NestJS: A Comprehensive Guide for Backend Development",
+  "postType": "post",
+  "slug": "getting-started-with-nestjs",
+  "status": "draft",
+  "content": "NestJS is a progressive Node.js framework for building efficient, reliable and scalable server-side applications. It uses TypeScript and combines elements of OOP, FP, and FRP.",
+  "schema": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"BlogPosting\"\n}",
+  "featuredImageUrl": "https://example.com/images/nestjs-guide.jpg",
+  "publishOn": "2025-11-25T12:46:33+06:00",
+  "tags": ["nestjs", "typescript", "backend", "nodejs"],
+  "metaOptions": [
+    {
+      "key": "seoTitle",
+      "value": "NestJS Guide - Learn Backend Development"
+    },
+    {
+      "key": "seoDescription",
+      "value": "Complete guide to building scalable backend applications with NestJS"
+    }
+  ]
+}
