@@ -1,6 +1,9 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { GetUsersParamDto } from '../dtos/get-users-param.dto';
-import { AuthService } from 'src/auth/providers/auth.service';
+import { Repository } from 'typeorm';
+import { User } from '../user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from '../dtos/create-user.dto';
 
 /**
  * Service responsible for managing user-related business logic and data operations.
@@ -15,13 +18,24 @@ import { AuthService } from 'src/auth/providers/auth.service';
 export class UsersService {
   /**
    * Creates an instance of UsersService.
-   *
-   * @param {AuthService} authService - The authentication service injected using forwardRef to resolve circular dependencies
    */
   constructor(
-    @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
+    /** Injecting usersRepository */
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
+
+  public async createUser(createUserDto: CreateUserDto) {
+    const existingUser = await this.usersRepository.findOne({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+
+    const newUser = this.usersRepository.create(createUserDto);
+
+    return this.usersRepository.save(newUser);
+  }
 
   /**
    * Retrieves all users from the database with pagination support.
@@ -46,12 +60,7 @@ export class UsersService {
     limit: number,
     page: number,
   ) {
-    const isAuth = this.authService.isAuthenticated();
-    console.log(isAuth);
-    return [
-      { firstName: 'Fahad', email: 'fahad@gmail.com' },
-      { firstName: 'Hasan', email: 'hasan@gmail.com' },
-    ];
+    return this.usersRepository.find();
   }
 
   /**
@@ -69,7 +78,7 @@ export class UsersService {
    * // Returns: { id: '123', firstName: 'Hasan', email: 'hasan@gmail.com' }
    * ```
    */
-  public findUserById(id: string) {
-    return { id, firstName: 'Hasan', email: 'hasan@gmail.com' };
+  public async findUserById(id: number) {
+    return await this.usersRepository.findOneBy({ id });
   }
 }

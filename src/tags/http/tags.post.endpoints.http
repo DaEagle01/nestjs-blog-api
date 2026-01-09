@@ -1,0 +1,10 @@
+POST http://localhost:3000/tags
+Content-Type: application/json
+
+{
+    "name": "Perl",
+    "description": "A description for Perl",
+    "slug": "perl",
+    "schema": "{}",
+    "featuredImageUrl": "https://example.com/featured-image.jpg"
+}

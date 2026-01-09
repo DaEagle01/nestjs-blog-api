@@ -8,8 +8,8 @@ export class AuthService {
     private readonly usersService: UsersService,
   ) {}
 
-  public login(emaiL: string, possword: string, id: string) {
-    this.usersService.findUserById('123');
+  public login(emaiL: string, possword: string, id: number) {
+    this.usersService.findUserById(id);
   }
 
   public isAuthenticated() {
