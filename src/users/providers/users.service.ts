@@ -1,9 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import * as config from '@nestjs/config';
 import { GetUsersParamDto } from '../dtos/get-users-param.dto';
 import { Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import profileConfig from '../config/profile.config';
 
 /**
  * Service responsible for managing user-related business logic and data operations.
@@ -23,6 +25,12 @@ export class UsersService {
     /** Injecting usersRepository */
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+
+    /** Injecting profile configuration */
+    @Inject(profileConfig.KEY)
+    private readonly profileConfiguration: config.ConfigType<
+      typeof profileConfig
+    >,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
