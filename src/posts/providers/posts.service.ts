@@ -1,4 +1,10 @@
-import { Body, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Injectable,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { Repository } from 'typeorm';
@@ -34,12 +40,26 @@ export class PostsService {
     let author = await this.usersService.findUserById(createPostDto.authorId);
 
     if (!author) {
-      throw new Error('Author not found');
+      throw new BadRequestException('Author not found');
     }
 
     let tags: Tag[] = [];
     if (createPostDto.tags) {
-      tags = await this.tagsService.findMultipleTags(createPostDto.tags);
+      try {
+        tags = await this.tagsService.findMultipleTags(createPostDto.tags);
+      } catch (error) {
+        throw new RequestTimeoutException(
+          'Unable to process your request. Please try again later.',
+          {
+            cause: error,
+            description: 'Error connecting to the database.',
+          },
+        );
+      }
+
+      if (tags.length !== createPostDto.tags.length) {
+        throw new BadRequestException('Please check your tag IDs');
+      }
     }
 
     // create post
@@ -49,8 +69,18 @@ export class PostsService {
       tags,
     });
 
-    // return the post
-    return await this.postsRepository.save(post);
+    try {
+      // return the post
+      return await this.postsRepository.save(post);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request. Please try again later.',
+        {
+          cause: error,
+          description: 'Error connecting to the database.',
+        },
+      );
+    }
   }
 
   public async findAll(userId: string) {
@@ -67,19 +97,48 @@ export class PostsService {
   }
 
   public async update(patchPostDto: PatchPostDto) {
-    let post = await this.postsRepository.findOneBy({ id: patchPostDto.id });
+    let post;
+
+    try {
+      post = await this.postsRepository.findOneBy({ id: patchPostDto.id });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request. Please try again later.',
+        {
+          cause: error,
+          description: 'Error connecting to the database.',
+        },
+      );
+    }
 
     if (!post) {
-      throw new Error('Post not found');
+      throw new NotFoundException('Post not found');
+    }
+
+    if (patchPostDto.tags) {
+      try {
+        const tags = await this.tagsService.findMultipleTags(patchPostDto.tags);
+
+        if (tags.length !== patchPostDto.tags.length) {
+          throw new BadRequestException(
+            'Please check your tag IDs and ensure they are correct.',
+          );
+        }
+
+        post.tags = tags;
+      } catch (error) {
+        throw new RequestTimeoutException(
+          'Unable to process your request. Please try again later.',
+          {
+            cause: error,
+            description: 'Error connecting to the database.',
+          },
+        );
+      }
     }
 
     post.title = patchPostDto.title ?? post.title;
     post.content = patchPostDto.content ?? post.content;
-
-    if (patchPostDto.tags) {
-      const tags = await this.tagsService.findMultipleTags(patchPostDto.tags);
-      post.tags = tags;
-    }
 
     post.postStatus = patchPostDto.postStatus ?? post.postStatus;
     post.postType = patchPostDto.postType ?? post.postType;
@@ -103,12 +162,22 @@ export class PostsService {
         patchPostDto.authorId,
       );
       if (!author) {
-        throw new Error('Author not found');
+        throw new BadRequestException('Author not found');
       }
       post.author = author;
     }
 
-    return await this.postsRepository.save(post);
+    try {
+      return await this.postsRepository.save(post);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request. Please try again later.',
+        {
+          cause: error,
+          description: 'Error connecting to the database.',
+        },
+      );
+    }
   }
 
   public async delete(id: number) {
@@ -117,7 +186,13 @@ export class PostsService {
 
       return { deleted: true, id };
     } catch (error) {
-      throw new Error('The post could not be deleted. Please try again later.');
+      throw new RequestTimeoutException(
+        'Unable to process your request. Please try again later.',
+        {
+          cause: error,
+          description: 'Error connecting to the database.',
+        },
+      );
     }
   }
 }

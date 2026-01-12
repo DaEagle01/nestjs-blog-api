@@ -11,7 +11,6 @@ import {
   Patch,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { GetUsersParamDto } from './dtos/get-users-param.dto';
 import { PatchUserDto } from './dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -21,11 +20,11 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('{/:id}')
-  @ApiOperation({ summary: 'Fetch a list of users or a single user by ID' })
+  @Get()
+  @ApiOperation({ summary: 'Fetch a list of users' })
   @ApiResponse({
     status: 200,
-    description: 'Fetched a list of users or a single user by ID',
+    description: 'Fetched a list of users successfully',
   })
   @ApiQuery({
     name: 'limit',
@@ -41,12 +40,21 @@ export class UsersController {
     default: 1,
     description: 'Page number',
   })
-  public getUsersOrOne(
-    @Param() getUsersParamDto: GetUsersParamDto,
+  public getUsers(
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
   ) {
-    return this.usersService.findAll(getUsersParamDto, limit, page);
+    return this.usersService.findAll({}, limit, page);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Fetch a single user by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Fetched user successfully',
+  })
+  public getUserById(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findUserById(id);
   }
 
   @Post()
