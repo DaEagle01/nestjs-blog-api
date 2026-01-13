@@ -7,3 +7,25 @@ Content-Type: application/json
     "email": "ali@bagheri.com",
     "password": "admin123!"
 }
+
+
+
+POST http://localhost:3000/users/create-many
+Content-Type: application/json
+
+{
+    "users": [
+        {
+            "firstName": "Rahmat",
+            "lastName": "bagheri",
+            "email": "rahmat@bagheri.com",
+            "password": "admin123!"
+        },
+        {
+            "firstName": "Didar",
+            "lastName": "bagheri",
+            "email": "didar@bagheri.com",
+            "password": "admin123!"
+        }
+    ]
+}
