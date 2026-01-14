@@ -1,3 +1,2 @@
-GET http://localhost:3000/users
-?limit=20
-&page=2
+GET http://localhost:3000/tags
+ 

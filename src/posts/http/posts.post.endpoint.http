@@ -2,15 +2,15 @@ POST http://localhost:3000/posts
 Content-Type: application/json
 
 {
-  "title": "Learn Perl",
+  "title": "Learn MIcrosoft Azure",
   "postType": "post",
-  "slug": "learn-perl",
+  "slug": "learn-microsoft-azure",
   "postStatus": "draft",
   "content": "Hello world",
   "schema": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"BlogPosting\"\n}",
-  "featuredImageUrl": "https://example.com/images/nestjs-guide.jpg",
-  "publishOn": "2025-11-25T12:46:33+06:00",
-  "tags": [9],
+  "featuredImageUrl": "https://example.com/images/nodejs-guide.jpg",
+  "publishOn": "2026-01-14T05:55:52.349Z",
+  "tags": [25],
   "metaOptions": {
     "metaValue": "{\"sidebarEnabled\": true, \"footerActived\": false}"
   },

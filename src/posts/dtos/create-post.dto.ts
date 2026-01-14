@@ -3,9 +3,7 @@ import {
   IsDate,
   IsEnum,
   IsInt,
-  IsISO8601,
   IsJSON,
-  isNotEmpty,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -94,7 +92,7 @@ export class CreatePostDto {
     description: 'The blog post publish date',
     example: '2025-11-25T12:46:33+06:00',
   })
-  @IsISO8601()
+  @IsDate()
   @IsNotEmpty()
   @IsOptional()
   publishOn: Date;

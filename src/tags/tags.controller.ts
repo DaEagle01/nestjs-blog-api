@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   ParseIntPipe,
   Post,
   Query,
@@ -17,6 +18,11 @@ export class TagsController {
      */
     private readonly tagService: TagsService,
   ) {}
+
+  @Get()
+  public findAll() {
+    return this.tagService.findAll();
+  }
 
   @Post()
   public create(@Body() createTagDto: CreateTagDto) {

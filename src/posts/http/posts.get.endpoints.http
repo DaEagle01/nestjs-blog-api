@@ -1,1 +1,12 @@
+{{
+    // pre request scripts
+    const startDate = new Date(); 
+    const endDate = new Date();
+    
+    exports.startDate = startDate.toISOString();
+    exports.endDate = endDate.toISOString();
+}}
+
 GET http://localhost:3000/posts/
+    ?limit=5
+    &page=1
