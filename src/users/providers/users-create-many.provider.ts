@@ -10,7 +10,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { CreateUsersDto } from '../dtos/create-many-user.dto';
 
 @Injectable()
-export class UsersCreateManyProvider {
+export class CreateManyUsersProvider {
   constructor(
     /** Injecting dataSource */
     @InjectDataSource()
